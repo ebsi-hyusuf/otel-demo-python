@@ -39,7 +39,7 @@
 docker network create my-net
 
 # run lgtm stack container
-$ docker run -p 3000:3000 -p 4317:4317 -p 4318:4318  -dit \
+ docker run -p 3000:3000 -p 4317:4317 -p 4318:4318  -dit \
 --network my-net --name otel-lgtm grafana/otel-lgtm
 
 # run python app & send all telemetry data to grafana via otlp

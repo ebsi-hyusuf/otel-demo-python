@@ -2,6 +2,9 @@ import datetime
 import flask
 import logging
 import time
+import requests
+
+
 
 app = flask.Flask(__name__)
 start = datetime.datetime.now()
@@ -21,13 +24,35 @@ def health():
     logging.warning("health route was accessed")
     return flask.jsonify({'message': f'up and running since {(now - start)}'})
 
+
+    
+
 @app.route('/slow', methods=['GET'])
 def slow():
     logging.warning("slow route was accessed, delay will be stimulated")
     time.sleep(10)
     logging.warning("responding after 10 second delay" )
+    return flask.jsonify('responding after 10 second delay')
 
-    return flask.jsonify({"message": f"slow response after 10 seconds"}), 200
+
+@app.route('/slow-api', methods=['GET'])
+def slow_api():
+    logging.warning("Simulating slow API call")
+    try:
+        # Simulate a slow external API call with a delay
+        response = requests.get('https://httpbin.org/delay/5')  # 5-second delay
+        return flask.jsonify({'message': 'API call completed', 'data': response.json()}), 200
+    except Exception as e:
+        logging.error(f"API call failed: {e}")
+        return flask.jsonify({'error': 'API call failed'}), 500
+
+
+
+@app.route('/fail', methods=['GET'])
+def fail():
+    logging.error('fail route triggered - example')
+    raise Exception("simulated application failure for testing")
+
 @app.errorhandler(404)
 def page_not_found(error):
     logging.error(f"404 error: {error}")
